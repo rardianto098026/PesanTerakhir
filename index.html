@@ -2,7 +2,8 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Harvest Moon Visual Novel</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
@@ -40,7 +41,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: url('/PesanTerakhir/img/bg2.jpg') no-repeat center center;
+            background: url('img/bg2.jpg') no-repeat center center;
             background-size: cover;
         }
 
@@ -190,6 +191,7 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
+            z-index: 99;
         }
 
         .choice {
@@ -286,7 +288,7 @@
         /* Responsive design */
         @media (max-width: 768px) {
             .character-container {
-                right: 2%;
+                left: calc(50% - 160px); /* Half of the width */
                 bottom: 20%;
                 width: 250px;
                 height: 350px;
@@ -298,6 +300,36 @@
             
             .dialogue-text {
                 font-size: 12px;
+            }
+
+            #img_char {
+                width: 320px;
+            }
+
+            .option-box {
+                top: 25%;
+                right: -5%;
+                z-index: 99;
+            }
+
+            .choice{
+                background: linear-gradient(to left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.8));
+                border-radius: 10px;
+                padding: 10px 16px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                font-weight: bold;
+                color: #fff;
+                height: 45px;
+                line-height: 25px;
+                width: 300px;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+                margin-bottom: 10px;
+                font-size: small;
+            }
+
+            .choice:hover{
+                transform: scale(1);
             }
         }
     </style>
@@ -316,7 +348,7 @@
         
         
         <div class="dialogue-controls">
-            SPACE: Lanjut | ESC: Tutup
+            From : Toro
         </div>
 
         <div class="option-box">
@@ -326,7 +358,7 @@
         </div>
         
         <!-- Dialogue Box -->
-        <div class="dialogue-box-parent">
+        <div class="dialogue-box-parent" onclick="handleSpaceKey()">
             <div class="nameplate">
                 <span class="character-name">Toro-kun</span>
             </div>
@@ -336,7 +368,7 @@
                 </div>
                 
                 <div class="continue-indicator">
-                    ► Tekan SPACE untuk melanjutkan
+                    ► Tekan SPACE atau klik untuk lanjut
                 </div>
             </div>
         </div>
@@ -363,7 +395,7 @@
                 char: "Poro",
                 text: "Tapi kamu masih inget sama aku kan?", //bertanyatanya
                 choices: [
-                    { text: "Iya, masih ingat kok", value: "masih ingat", response: "Mwehehe syukurlah kalo inget" },
+                    { text: "Iya, masih inget kok", value: "masih ingat", response: "Mwehehe syukurlah kalo inget" },
                     { text: "Ngga, emang kamu siapa?", value: "lupa", response: "Ish parah banget masa lupa... Aku tuh Poro tauuu.. Temennya Toro" }
                 ]
             },
@@ -420,7 +452,7 @@
                 text: `Tapi aku benar-benar berharap kamu bangga dengan diri kamu sendiri.\nKamu layak untuk itu. Lebih dari yang kamu pikirkan.`, // pose malu
                 choices: [
                     { text: "Terima kasih...", value: "terima kasih" },
-                    { text: "Kenapa kamu tiba-tiba muncul?", value: "tiba tiba muncul", response: "Iya, aku tau. Ini terasa sangat tiba-tiba. Tapi bukan karena aku mau ganggu kamu...\nAku cuma mau beri ruang untuk satu pesan terakhir yang belum sempat aku ucapin dulu" }
+                    { text: "Kenapa tiba-tiba?", value: "tiba tiba muncul", response: "Iya, aku tau. Ini terasa sangat tiba-tiba. Tapi bukan karena aku mau ganggu kamu...\nAku cuma mau beri ruang untuk satu pesan terakhir yang belum sempat aku ucapin dulu" }
                 ]
             },
             {
@@ -440,7 +472,7 @@
                 text: `Aku ngecewain kamu.\nDan aku gak akan cari pembenaran.\nAku cuma mau kamu tau...\naku menyesal.`, //pose agak sedih
                 choices: [
                     { text: "Iya... aku kecewa.", value: "kecewa" },
-                    { text: "Aku sudah maafin kamu...", value: "maafin", response: "Terima kasih... kamu gak tau seberapa lega rasanya dengar hal itu." }
+                    { text: "Aku udah maafin kamu", value: "maafin", response: "Terima kasih... kamu gak tau seberapa lega rasanya dengar hal itu." }
                 ]
             },
             {
@@ -456,7 +488,7 @@
                 text: `Tapi karena aku sadar... kamu adalah rumah yang pernah aku tinggalin karena ketakutan yang salah.`, //pose malu
                 choices: [
                     { text: "Kamu masih?", value: "masih?" },
-                    { text: "Tapi semuanya sudah berubah", value: "sudah berubah", response: "Iya, aku tau. Banyak yang berubah. Termasuk aku. Tapi perasaanku ke kamu... masih sama." }
+                    { text: "Tapi semua udah berubah", value: "sudah berubah", response: "Iya, aku tau. Banyak yang berubah. Termasuk aku. Tapi perasaanku ke kamu... masih sama." }
                 ]
             },
             {
@@ -496,7 +528,7 @@
                 text: `Tapi untuk membuktikan bahwa aku belajar. \nDan siap bertanggung jawab atas kesempatan ini.`, //pose ini
                 choices: [
                     { text: "Kamu yakin bisa?", value: "kamu yakin?" },
-                    { text: "Aku gak tau harus jawab apa", value: "gatau jawab apa", response: "Gapapa kok... aku tau kamu butuh waktu. Aku cuma mau kamu tau niat aku" }
+                    { text: "Aku gatau harus jawab apa", value: "gatau jawab apa", response: "Gapapa kok... aku tau kamu butuh waktu. Aku cuma mau kamu tau niat aku" }
                 ]
             },
             {
@@ -529,8 +561,8 @@
         let isOption = false;
         let isShowOption = false;
         let optionTextActive = "";
-        let backSound = new Audio('/PesanTerakhir/sound/backsound.mp3');
-        let typingSound = new Audio('/PesanTerakhir/sound/ketik.mp3');
+        let backSound = new Audio('sound/backsound.mp3');
+        let typingSound = new Audio('sound/ketik.mp3');
 
         function typeWriter(text, element, speed = 50) {
             element.innerHTML = '';
@@ -713,6 +745,11 @@
                 }
             }
         });
+
+        function handleSpaceKey() {
+            const event = new KeyboardEvent('keydown', { code: 'Space', key: ' ', keyCode: 32 });
+            document.dispatchEvent(event);
+        }
 
         
         // Initialize with typing effect
