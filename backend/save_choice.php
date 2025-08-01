@@ -1,5 +1,5 @@
 <?php
-// session_start(); // Uncomment if you need to use session_id()
+session_start(); // Uncomment if you need to use session_id()
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -32,10 +32,10 @@ try {
 
     $choice_key = $data['key'] ?? null;
     $choice_value = $data['value'] ?? null;
-
+    $session_id = session_id();
     if ($choice_key && $choice_value) {
         $stmt = $pdo->prepare("INSERT INTO user_choices (session_id, choice_key, choice_value) VALUES (?, ?, ?)");
-        $stmt->execute(["session", $choice_key, $choice_value]); // Replace "session" with session_id() if needed
+        $stmt->execute([$session_id, $choice_key, $choice_value]); // Replace "session" with session_id() if needed
         echo json_encode(['status' => 'success']);
     } else {
         http_response_code(400);
