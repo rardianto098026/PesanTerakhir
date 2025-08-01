@@ -19,6 +19,10 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            user-select: none; /* Prevent text selection */
+            -webkit-user-select: none; /* Safari */
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* IE10+ */
         }
 
         body {
@@ -56,6 +60,8 @@
 
         #img_char {
             width: 600px;
+            transition: filter 0.2s ease, transform 0.2s ease;
+            transform: scale(1);
         }
 
         .character {
@@ -183,7 +189,12 @@
             background: rgba(0, 0, 0, 0.1);
         }
 
+        .btn-cancel {
+            background: #1F1F1F !important;
+            border: 1px solid #8B4513 !important;
+        }
 
+        
         .option-box {
             position: absolute;
             right: 10%;
@@ -199,7 +210,6 @@
             border-radius: 10px;
             padding: 10px 16px;
             cursor: pointer;
-            transition: all 0.3s ease;
             font-weight: bold;
             color: #fff;
             height: 65px;
@@ -207,6 +217,15 @@
             width: 500px;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
             margin-bottom: 10px;
+            overflow: hidden;
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .choice span {
+            display: inline-block;
+            white-space: nowrap;
+            will-change: transform;
         }
 
         .choice:hover {
@@ -292,6 +311,52 @@
             animation: typing 3s steps(40, end) infinite;
         }
 
+        .popup-textarea-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0,0,0,0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .popup-textarea-box {
+            background: #1F1F1F;
+            padding: 20px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .popup-textarea-box textarea {
+            width: 100%;
+            resize: none;
+            padding: 10px;
+            font-size: 14px;
+            border-radius: 6px;
+            border: 1px solid #8B4513;
+            background: #1F1F1F;
+            color: white;
+            margin-bottom: 12px;
+        }
+
+        .popup-textarea-box button {
+            background: #8B4513;
+            color: #fff;
+            border: none;
+            padding: 10px 16px;
+            border: 1px solid #8B4513;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
         @keyframes typing {
             from { width: 0; }
             to { width: 100%; }
@@ -321,10 +386,12 @@
 
             #img_char {
                 width: 320px;
+                transition: filter 0.2s ease, transform 0.2s ease;
+                transform: scale(1);
             }
 
             .option-box {
-                top: 55%;
+                bottom: 27%;
                 right: 0%;
                 z-index: 99;
             }
@@ -403,176 +470,208 @@
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
+    <script>  
         document.querySelector('.option-box').style.display = 'none';
 
         const dialogues = [
             {
                 char: "Poro",
-                text: "Haloo Cacaaaa, kamu pasti kaget ya kenapa tiba-tiba ada aku di sini.", //pose menyapa
+                text: "Caca... alooo. Udah lama banget, ya?",
+                imagePath: "img/poro/poro-hi.png"
             },
             {
                 char: "Poro",
-                text: "Tapi kamu masih inget sama aku kan?", //bertanyatanya
+                text: "Kamu inget aku, nggak? Poro? Yang dulu jadi karakter di game Toro waktu nyatain perasaan ke kamu?", 
+                imagePath: "img/poro/poro-bingung.png"
+            },
+            {
+                char: "Poro",
+                text: "Waktu itu aku muncul buat bantuin Toro ngomong. Sekarang... kayaknya tugas aku masih belum selesai.",
+                imagePath: "img/poro/poro-nawar.png"
+            },
+            {
+                char: "Poro",
+                text: "Aku tau, kamu pasti inget Toro. Mungkin bukan dengan cara yang baik. Tapi dia di sini, dan dia cuma minta satu hal: bicara. Sekali ini aja.",
+                imagePath: "img/poro/poro-sad.png"
+            },
+            {
+                char: "Poro",
+                text: "Dia nggak nyangka... kalau keputusannya dulu ternyata bikin kamu menjauh sejauh itu.",
+                imagePath: "img/poro/poro-malu.png",
                 choices: [
-                    { text: "Iya, masih inget kok", value: "masih ingat", response: "Mwehehe syukurlah kalo inget" },
-                    { text: "Ngga, emang kamu siapa?", value: "lupa", response: "Ish parah banget masa lupa... Aku tuh Poro tauuu.. Temennya Toro" }
+                    { 
+                        text: "Dia baru sadar sekarang? ", 
+                        value: "baru sadar", 
+                        response: "Iya... kadang orang baru ngerti setelah semuanya bubar." 
+                    },
+                    { 
+                        text: "Kenapa dia muncul lagi?", 
+                        value: "muncul lagi", 
+                        response: "Karena dia tau... ini mungkin kesempatan terakhir sebelum kamu benar-benar pergi lebih jauh." 
+                    }
                 ]
             },
             {
                 char: "Poro",
-                text: "Aku sebenernya cukup menyesal waktu tau kalo hubungan antara toro sama kamu berakhir beberapa tahun lalu", //pose agak sedih
-            },
-            {
-                char: "Poro",
-                text: "Aku juga udah marahin dia, waktu tau apa yang terjadi dengan hal itu", //pose agak marah
-            },
-            {
-                char: "Poro",
-                text: "Tapi Ca, ", //pose agak takut dan malu
-            },
-            {
-                char: "Poro",
-                text: "Aku tau dia salah banget waktu itu, 1000000% salah besar udah putusin kamu. ", //pose agak takut dan malu
-            },
-            {
-                char: "Poro",
-                text: "Tapi kasih dia kesempatan sekali lagi untuk ngobrol sama kamu ya ", //pose agak takut dan malu
-            },
-            {
-                char: "Poro",
-                text: "Kalopun jadi yang terakhir gapapa kok, kebetulan dia juga udah ngeberaniin diri buat kesini untuk ngomong sama kamu ", //pose agak takut dan malu
-            },
-            {
-                char: "Poro",
-                text: "Tor... siniii!!!", //pose manggil orang
-            },
-            {
-                char: "Poro",
-                text: "Selanjutnya aku serahin sama kalian yaa, kebetulan nenek aku mau main futsal untuk 17-an, jadi harus nemenin dia latihan ",  //Pose 1 tangan mengangkat setengah
-            },
-            {
-                char: "Poro",
-                text: "Daahh... ", //pose menyapa
+                text: "Oke, aku serahin sama kalian yaa. Nenekku lagi latihan pingpong untuk 17-an, aku jadi pelatihnya. Hehe. Toro... giliran lu!",
+                imagePath: "img/poro/poro-nawar.png"
             },
             {
                 char: "Toro",
-                text: "Halo Ca.. ", //pose menyapa
+                text: "Halo Ca.. ", 
+                imagePath: "img/toro/toro-hi.png"
             },
             {
                 char: "Toro",
-                text: "Hmm.. Sebelum semuanya, aku cuma mau bilang \n🎓 Selamat lulus, Caca.\n🎉 Dan selamat ulang tahun juga yaaa..." //pose jempol
+                text: "Hmm.. Sebelum semuanya, aku cuma mau bilang \n🎓 Selamat lulus, Caca.\n🎉 Dan selamat ulang tahun juga yaaa...",
+                imagePath: "img/toro/toro-ok.png"
             },
             {
                 char: "Toro",
-                text: "Maaf kalau aku bukan orang pertama dan mungkin bukan orang yang kamu harapkan untuk ngucapin ini..." //pose jempol
+                text: "Maaf kalau aku bukan orang pertama dan mungkin bukan orang yang kamu harapkan untuk ngucapin ini...", 
+                imagePath: "img/toro/toro-pd.png"
             },
             {
                 char: "Toro",
-                text: `Tapi aku benar-benar berharap kamu bangga dengan diri kamu sendiri.\nKamu layak untuk itu. Lebih dari yang kamu pikirkan.`, // pose malu
+                text: `Tapi aku benar-benar berharap kamu bangga dengan diri kamu sendiri.\nKamu layak untuk itu. Lebih dari yang kamu pikirkan.`,
+                imagePath: "img/toro/toro-pd.png"
+            },
+            {
+                char: "Toro",
+                text: "Ca... makasih udah dengerin aku sejauh ini. Aku tau aku bukan orang yang paling layak buat kamu temuin hari ini.",
+                imagePath: "img/toro/toro-malu.png"
+            },
+            {
+                char: "Toro",
+                text: "Tapi ada satu hal yang selalu ganggu pikiranku: kenapa kamu menjauh sejauh itu?",
+                imagePath: "img/toro/toro-malu.png"
+            },
+            {
+                char: "Toro",
+                text: "Aku sadar aku yang minta putus waktu itu. Tapi aku gak pernah ngira kamu bakal bener-bener ilang. Blokir semua. Gak ada ruang buat satu kata pun.",
+                imagePath: "img/toro/toro-malu.png"
+            },
+            {
+                char: "Toro",
+                text: "Waktu itu aku pikir aku ngelakuin hal yang tepat. Aku takut jadi beban buat kamu. Aku takut kamu makin capek karena aku. Tapi sekarang aku mulai ngerasa... mungkin aku salah banget soal itu.",
+                imagePath: "img/toro/toro-sedih.png"
+            },
+            {
+                char: "Toro",
+                text: "Aku gak dateng buat nuntut apa-apa. Aku dateng buat minta maaf... karena ninggalin kamu dengan cara yang gak pantas. Dan buat ngerti, sebenernya hal bikin kamu sakit banget itu apa?",
+                imagePath: "img/toro/toro-malu.png"
+            },
+            {
+                char: "Toro",
+                text: "Jadi, boleh gak... kamu bantu aku ngerti, Ca?",
+                imagePath: "img/toro/toro-malu.png",
                 choices: [
-                    { text: "Terima kasih...", value: "terima kasih" },
-                    { text: "Kenapa tiba-tiba?", value: "tiba tiba muncul", response: "Iya, aku tau. Ini terasa sangat tiba-tiba. Tapi bukan karena aku mau ganggu kamu...\nAku cuma mau beri ruang untuk satu pesan terakhir yang belum sempat aku ucapin dulu" }
+                    {
+                        text: "Karena terlalu gampang mutusin",
+                        value: "mudah_pergi",
+                        response: "Toro: Aku pikir itu tindakan dewasa... tapi ternyata malah bikin kamu ngerasa ditinggalin, ya?",
+                        imagePath: "img/toro/toro-sedih.png"
+                    },
+                    {
+                        text: "Karena terkesan hidup aku cuma keputusan sepihak.",
+                        value: "sepihak",
+                        response: "Toro: Aku gak pernah ngelihatnya dari sisi itu... Aku kira itu cara paling aman. Tapi ternyata aku malah jadi arogan.",
+                        imagePath: "img/toro/toro-sedih.png"
+                    },
+                    {
+                        text: "Karena ganggu lagi waktu aku udah mulai belajar ngelepas.",
+                        value: "terlambat_datang",
+                        response: "Toro: Iya... aku egois banget ya. Dateng pas aku pengen, tanpa mikirin kamu udah sejauh apa ninggalin semua ini.",
+                        imagePath: "img/toro/toro-sedih.png"
+                    },
+                    {
+                        text: "Aku mau jelasin sendiri",
+                        showTB: true
+                    }
                 ]
             },
             {
                 char: "Toro",
-                text: `Terima kasih...\n\nTerima kasih udah mau baca ini.\nKamu gak harus... tapi kamu tetep ada di sini.\nItu... berarti lebih dari yang bisa aku jelasin.` //pose malu
+                text: "Hmm... gitu yaa...",
+                imagePath: "img/toro/toro-sedih.png"
             },
             {
                 char: "Toro",
-                text: `Aku mau minta maaf...\nBukan cuma karena kita berakhir.\nTapi karena cara kita berakhir.` //pose agak sedih
+                text: "Ca... makasih yaa. Serius. Karena hari ini kamu bilang sesuatu yang gak pernah aku berani tebak sendiri.",
+                imagePath: "img/toro/toro-ok.png"
             },
             {
                 char: "Toro",
-                text: `Aku terlalu takut waktu itu. Takut gagal.\nTakut gak bisa kasih kamu masa depan yang jelas.\nDan... terlalu sibuk dengan rasa insecure-ku sendiri, sampai lupa...\nkamu cuma mau seseorang yang bertahan.` //pose agak sedih
+                text: "Aku tau... mungkin ini udah terlambat. Tapi boleh gak... aku minta satu hal lagi?",
+                imagePath: "img/toro/toro-malu.png"
             },
             {
                 char: "Toro",
-                text: `Aku ngecewain kamu.\nDan aku gak akan cari pembenaran.\nAku cuma mau kamu tau...\naku menyesal.`, //pose agak sedih
+                text: "Dulu aku pergi karena aku takut... takut ngecewain kamu, takut jadi beban, takut kamu capek terus-menerus karena aku.",
+                imagePath: "img/toro/toro-malu.png"
+            },
+            {
+                char: "Toro",
+                text: "Tapi waktu kamu beneran pergi... aku baru ngerti.",
+                imagePath: "img/toro/toro-malu.png"
+            },
+            {
+                char: "Toro",
+                text: "Kamu bukan butuh aku jadi sempurna. Kamu cuma butuh aku buat bertahan. Buat tetep tinggal.",
+                imagePath: "img/toro/toro-sedih.png"
+            },
+            {
+                char: "Toro",
+                text: "Dan aku gagal. Karena aku terlalu sibuk mikir, sampe lupa... kamu udah berjuang sendiri dari awal, bahkan sebelum aku ada.",
+                imagePath: "img/toro/toro-sedih.png"
+            },
+            {
+                char: "Toro",
+                text: "Sekarang, setelah semua yang aku denger hari ini...",
+                imagePath: "img/toro/toro-sedih.png"
+            },
+            {
+                char: "Toro",
+                text: "Aku gak akan bilang aku berubah total. Tapi aku bisa pastiin satu hal: Aku udah belajar. Dan aku gak mau ulangin itu lagi.",
+                imagePath: "img/toro/toro-sedih.png"
+            },
+            {
+                char: "Toro",
+                text: "Kalau hari ini kamu bilang kamu gak mau lihat aku lagi — aku terima. Dan aku akan pergi. Tapi kalau... kalau ada ruang sekecil apapun...",
+                imagePath: "img/toro/toro-sedih.png"
+            },
+            {
+                char: "Toro",
+                text: "Aku mau isi ruang itu. Bukan sebagai mantan. Tapi sebagai seseorang yang siap mencintai kamu dengan cara yang baru. Dengan cara yang seharusnya.",
+                imagePath: "img/toro/toro-malu.png"
+            },
+            {
+                char: "Toro",
+                text: "Jadi, Ca... boleh gak, aku minta satu kesempatan lagi?",
+                imagePath: "img/toro/toro-malu.png",
                 choices: [
-                    { text: "Iya... aku kecewa.", value: "kecewa" },
-                    { text: "Aku udah maafin kamu", value: "maafin", response: "Terima kasih... kamu gak tau seberapa lega rasanya dengar hal itu." }
-                ]
-            },
-            {
-                char: "Toro",
-                text: `Tapi satu hal yang gapernah berubah, bahkan sampai sekarang...\nadalah perasaan aku ke kamu.` //pose malu
-            },
-            {
-                char: "Toro",
-                text: `Aku masih... cinta sama kamu.\nAku masih sayang sama kamu.\nDan perasaan itu bukan karena aku kesepian` //pose malu
-            },
-            {
-                char: "Toro",
-                text: `Tapi karena aku sadar... kamu adalah rumah yang pernah aku tinggalin karena ketakutan yang salah.`, //pose malu
-                choices: [
-                    { text: "Kamu masih?", value: "masih?" },
-                    { text: "Tapi semua udah berubah", value: "sudah berubah", response: "Iya, aku tau. Banyak yang berubah. Termasuk aku. Tapi perasaanku ke kamu... masih sama." }
-                ]
-            },
-            {
-                char: "Toro",
-                text: `Aku tau mungkin ini berat.\nTapi... Boleh aku minta satu hal...?` //pose agak sedih
-            },
-            {
-                char: "Toro",
-                text: `Kesempatan terakhir` //pose agak sedih
-            },
-            {
-                char: "Toro",
-                text: `Bukan untuk mengulang apa yang dulu.\nTapi untuk memulai ulang, dari versi kita yang lebih matang, lebih siap, dan lebih jujur.`, //pose agak sedih
-                choices: [
-                    { text: "Terus mau dibawa kemana?", value: "dibawa kemana" },
-                    { text: "Apa bedanya dengan dulu?", value: "apa bedanya?", response: "Iya, aku tau. Banyak yang berubah. Termasuk aku. Tapi perasaanku ke kamu... masih sama." }
-                ]
-            },
-            {
-                char: "Toro",
-                text: `Aku gak dateng bawa janji kosong.\nAku gak bilang ini akan mudah.` //pose ini
-            },
-            {
-                char: "Toro",
-                text: `Tapi aku tau satu hal` //pose ini
-            },
-            {
-                char: "Toro",
-                text: `Kalau kamu beri aku kesempatan sekali lagi, aku mau pastiin hubungan kita berakhir bukan di luka, tapi di pelaminan.` //pose ini
-            },
-            {
-                char: "Toro",
-                text: `Aku datang bukan untuk minta dicintai lagi.` //pose ini
-            },
-            {
-                char: "Toro",
-                text: `Tapi untuk membuktikan bahwa aku belajar. \nDan siap bertanggung jawab atas kesempatan ini.`, //pose ini
-                choices: [
-                    { text: "Kamu yakin bisa?", value: "kamu yakin?" },
-                    { text: "Aku gatau harus jawab apa", value: "gatau jawab apa", response: "Gapapa kok... aku tau kamu butuh waktu. Aku cuma mau kamu tau niat aku" }
-                ]
-            },
-            {
-                char: "Toro",
-                text: `Kalau kamu kasih aku kesempatan sekali lagi,\naku janji... ini akan jadi kesempatan terakhir.` //pose malu
-            },
-            {
-                char: "Toro",
-                text: `Bukan karena aku menyerah setelah ini,\ntapi karena aku mau ini jadi akhir dari pencarian, bukan pengulangan` //pose malu
-            },
-            {
-                char: "Toro",
-                text: `Tapi kalau kamu merasa ini bukan jalannya...\naku bakalan pergi kok. Rill banget inimah hehehehe.` //pose jempol
-            },
-            {
-                char: "Toro",
-                text: `Bukan dengan marah, bukan dengan dendam,\ntapi dengan rasa syukur... karena pernah mencintai kamu.`, //pose jempol
-                choices: [
-                    { text: "Maaf, tapi aku gak bisa", value: "ditolak", response: "Aku mengerti... dan aku akan nepatin janji aku.\nTerima kasih, Caca.\nSelamat tinggal yang indah ^^" },
-                    { text: "Aku masih butuh waktu.", value: "dipertimbangkan", response: "Okay, take ur time Ca.\nAku gak akan maksa.\nTapi aku di sini... kalau kamu mau bicara." },
-                    { text: "Aku mau bicara lebih lanjut", value: "lanjut wa" }
+                    {
+                        text: "Aku belum bisa, Toro. Tapi aku dengerin kamu, dan itu cukup untuk hari ini.",
+                        value: "belum_bisa",
+                        response: "Toro: Makasih... karena hari ini kamu dengerin. Dan kalau suatu hari kamu siap, aku masih di sini. Selalu di sini.",
+                        music: "music/bunga_maaf.mp3"
+                    },
+                    {
+                        text: "Aku gak tau harus bilang apa... tapi hatiku gak sekeras yang kamu kira.",
+                        value: "harapan",
+                        response: "Toro: Aku gak butuh jawaban hari ini. Denger kamu ngomong itu aja... udah bikin aku percaya, kalau ini belum benar-benar selesai.",
+                        music: "video/missyou.mp4"
+                    },
+                    {
+                        text: "Toro, semua ini... terlalu terlambat.",
+                        value: "terlambat",
+                        response: "Toro: Iya... aku ngerti. Kadang penyesalan datang pas semuanya udah hancur. Tapi aku tetap bersyukur... karena pernah punya kamu, walau cuma sebentar. \n Sebagai penutup, (nyalain suara yak) Bola kalo \"o\" nya diganti \"i\" jadi apa?",
+                        music: "music/bila.mp3"
+                    }
                 ]
             }
         ];
+
         
         let currentDialogue = 0;
         let typingInProgress = false;
@@ -635,10 +734,37 @@
             typingSound.pause();
         }
 
+        function updateCharacterImage(newSrc) {
+            const img = document.getElementById("img_char");
+
+            if (img.getAttribute("src") === newSrc) return;
+
+            // Efek transisi: blur dan scale sedikit (tidak hilang)
+            img.style.transform = "scale(0.98)";
+
+            // Ganti gambar setelah efek blur aktif
+            setTimeout(() => {
+                img.setAttribute("src", newSrc);
+
+                // Setelah gambar baru dimuat, pulihkan blur dan scale
+                img.onload = () => {
+                img.style.filter = "blur(0px)";
+                img.style.transform = "scale(1)";
+                };
+            }, 200); // Match dengan CSS transition
+        }
+
+        let musicEnding = "";
+
         function nextDialogue() {
             if (currentDialogue < dialogues.length - 1) {
                 currentDialogue++;
                 current = dialogues[currentDialogue];
+
+                if (current.imagePath) {
+                    updateCharacterImage(current.imagePath);
+                }
+
 
                 if (current.choices) {
                     document.querySelector(".continue-indicator").style.display = 'none';
@@ -649,7 +775,48 @@
                 typeWriter(current.text, dialogueText);
             } else {
                 // End of dialogues, show reset popup
-                showResetPopup();
+                if (musicEnding !== "") {
+                    if (musicEnding.includes("music/")) {
+                        // Fade out backsound (asumsi backsound adalah Audio object)
+                        if (backSound) {
+                            let fadeOutInterval = setInterval(() => {
+                                if (backSound.volume > 0.05) {
+                                    backSound.volume -= 0.05;
+                                } else {
+                                    backSound.volume = 0;
+                                    backSound.pause();
+                                    clearInterval(fadeOutInterval);
+                                }
+                            }, 100); // Mengurangi volume setiap 100ms
+                        }
+
+                        // Tunggu 2 detik (2000ms) lalu play musik baru dan tampilkan popup
+                        setTimeout(() => {
+                            backSound = new Audio(musicEnding);
+                            backSound.volume = 0; // Mulai dari senyap
+                            backSound.loop = true; // Aktifkan loop
+                            backSound.play();
+
+                            // Efek fade-in
+                            let fadeInInterval = setInterval(() => {
+                                if (backSound.volume < 0.95) {
+                                    backSound.volume += 0.005;
+                                } else {
+                                    backSound.volume = 1;
+                                    clearInterval(fadeInInterval);
+                                }
+                            }, 100); // Naikkan volume setiap 100ms
+
+                            showResetPopup(); // Tampilkan popup setelah mulai play
+                        }, 2000); // Delay awal 2 detik
+
+                    } else {
+                        showResetPopup(); // Jika tidak ada "music/", tetap tampilkan popup
+                    }
+                } else {
+                    showResetPopup(); // Jika kosong, tetap tampilkan popup
+                }
+
             }
         }
 
@@ -661,6 +828,38 @@
 
         function showResetPopup() {
             document.getElementById('reset-popup').style.display = 'flex';
+            const popupContent = document.querySelector('.popup-content');
+            const existingMedia = popupContent.querySelector('img, video');
+            if (existingMedia) existingMedia.remove();
+
+            // Insert media based on condition
+            if (musicEnding.includes("bunga_maaf")) {
+                const img = document.createElement('img');
+                img.src = "img/same_as_always.jpg";
+                img.alt = "Bunga Maaf";
+                img.style.width = "70%";
+                img.style.marginBottom = "20px";
+                img.style.height = "auto";
+                popupContent.insertBefore(img, popupContent.firstChild);
+            } else if (musicEnding.includes("miss")) {
+                const video = document.createElement('video');
+                video.src = "video/missyou.mp4";
+                video.autoplay = true;     // Enable autoplay
+                video.style.width = "70%";
+                video.style.marginBottom = "20px";
+                video.style.height = "auto";
+
+                popupContent.insertBefore(video, popupContent.firstChild);
+
+                backSound.pause();         // Pause background sound
+
+                // Optional: Force play in case autoplay fails
+                video.play().catch((err) => {
+                    console.warn("Autoplay failed:", err);
+                });
+
+            }
+
             $("#title-popup").text("Obrolan sudah berakhir");
             $("#button-popup").text("Mulai Lagi");
         }
@@ -670,12 +869,80 @@
             current = dialogues[currentDialogue];
             typeWriter(current.text, dialogueText);
             document.getElementById('reset-popup').style.display = 'none';
+            backSound.pause();
+            const video = document.querySelector('.popup-content video');
+            if (video) {
+                video.pause();
+                video.currentTime = 0;  // Reset to beginning
+                video.remove();         // Optional: remove from DOM
+            }
+
+            backSound = new Audio('sound/backsound.mp3');
 
             backSound.playbackRate = 1;
             backSound.loop = true;
             backSound.play().catch(() => {}); 
 
         }
+
+
+        function startMarquee(span, container) {
+            const containerWidth = container.clientWidth;
+            const textWidth = span.scrollWidth + 20;
+
+            if (textWidth <= containerWidth) return; // Tidak perlu marquee
+
+            const delay = 2000; // jeda 2 detik
+            const speed = 80; // px per detik
+            const distance = textWidth - containerWidth;
+            const duration = distance / speed * 1000; // dalam ms
+
+            let phase = "start-delay";
+            let startTime = null;
+
+            function animate(timestamp) {
+            if (!startTime) startTime = timestamp;
+
+            let elapsed = timestamp - startTime;
+
+            switch (phase) {
+                case "start-delay":
+                span.style.transform = `translateX(0)`;
+                if (elapsed >= delay) {
+                    phase = "scrolling";
+                    startTime = timestamp;
+                }
+                break;
+
+                case "scrolling":
+                let progress = elapsed / duration;
+                if (progress >= 1) {
+                    span.style.transform = `translateX(${-distance}px)`;
+                    phase = "end-delay";
+                    startTime = timestamp;
+                } else {
+                    span.style.transform = `translateX(${-distance * progress}px)`;
+                }
+                break;
+
+                case "end-delay":
+                span.style.transform = `translateX(${-distance}px)`;
+                if (elapsed >= delay) {
+                    phase = "start-delay";
+                    startTime = timestamp;
+                }
+                break;
+            }
+
+            requestAnimationFrame(animate);
+            }
+
+            // Mulai setelah delay awal
+            setTimeout(() => {
+            requestAnimationFrame(animate);
+            }, delay);
+        }
+
 
 
         let optionBox = document.querySelector('.option-box');
@@ -686,23 +953,111 @@
             isShowOption = true;
 
             choicesData.forEach((choice) => {
-                // Create choice element
                 const choiceEl = document.createElement('div');
                 choiceEl.className = 'choice';
                 choiceEl.setAttribute('data-value', choice.value || '');
                 choiceEl.setAttribute('data-response', choice.response || '');
 
-                // Create inner span for text
                 const span = document.createElement('span');
                 span.innerText = choice.text;
                 choiceEl.appendChild(span);
 
-                // Handle click
+                            
+                // Delay kecil agar render stabil
+                setTimeout(() => startMarquee(span, choiceEl), 100);
+
                 choiceEl.onclick = () => {
                     const key = choice.text;
                     const value = choice.value;
+                    
+                    if(choice.music){
+                        musicEnding = choice.music;
+                    }
 
-                    // Save selected choice via POST
+                    // If showTB, show popup with textarea
+                    if (choice.showTB === true) {
+                        // Create popup container
+                        const popup = document.createElement('div');
+                        popup.className = 'popup-textarea-overlay';  // Style this overlay
+                        popup.style.textAlign = 'right';
+
+                        // Popup inner box
+                        const popupBox = document.createElement('div');
+                        popupBox.className = 'popup-textarea-box'; // Style this box
+
+                        // Textarea
+                        const textarea = document.createElement('textarea');
+                        textarea.placeholder = 'Enter your response...';
+                        textarea.rows = 4;
+                        textarea.style.width = '100%';
+
+                        // Submit button
+                        const submitBtn = document.createElement('button');
+                        submitBtn.innerText = 'Submit';
+
+                        // Cancel button
+                        const cancelBtn = document.createElement('button');
+                        cancelBtn.innerText = 'Cancel';
+                        cancelBtn.className = "btn-cancel";
+                        cancelBtn.style.marginRight = '10px'; // spacing between buttons
+
+                        // Button container (optional)
+                        const buttonContainer = document.createElement('div');
+                        buttonContainer.style.marginTop = '10px';
+                        buttonContainer.appendChild(cancelBtn);
+                        buttonContainer.appendChild(submitBtn);
+
+                        // Append elements
+                        popupBox.appendChild(textarea);
+                        popupBox.appendChild(buttonContainer);
+                        popup.appendChild(popupBox);
+                        document.body.appendChild(popup);
+
+                        cancelBtn.onclick = () => {
+                            document.body.removeChild(popup);
+                        };
+                        // Submit click handler
+                        submitBtn.onclick = () => {
+                            const userInput = textarea.value.trim();
+
+                            if (!userInput) {
+                                alert('Please enter a response.');
+                                return;
+                            }
+
+                            // Save choice with user input
+                            fetch('backend/save_choice.php', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ key, value: userInput })
+                            })
+                            .then(res => res.json())
+                            .then(res => {
+                                console.log('Choice saved:', res);
+                                // Remove popup
+                                document.body.removeChild(popup);
+                                optionBox.style.display = 'none';
+                                isShowOption = false;
+
+                                if (choice.response !== undefined) {
+                                    optionTextActive = choice.response;
+                                    isOption = true;
+                                    typeWriter(choice.response, dialogueText);
+                                } else {
+                                    nextDialogue();
+                                }
+                            })
+                            .catch(err => {
+                                console.error('Error saving choice:', err);
+                                alert('Failed to save response, try again.');
+                            });
+                        };
+
+                        // Stop here, don’t proceed with normal flow
+                        return;
+                    }
+
+                    // Normal choice save flow
                     fetch('backend/save_choice.php', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -728,18 +1083,24 @@
                     }
                 };
 
-                // Append to container
                 optionBox.appendChild(choiceEl);
             });
 
-            // Show options
             optionBox.style.display = 'block';
         }
 
 
 
+
         // Keyboard controls
         document.addEventListener('keydown', (e) => {
+            // Check if the focused element is a textarea or an input
+            const activeElement = document.activeElement;
+            const isTextInput = activeElement.tagName === 'TEXTAREA' ||
+                                (activeElement.tagName === 'INPUT' && activeElement.type === 'text');
+
+            if (isTextInput) return; // Let space behave normally in text input
+
             if (e.code === 'Space' && $("#reset-popup").css("display") !== "flex") {
                 e.preventDefault();
 
@@ -747,24 +1108,26 @@
 
                 if (typingInProgress) {
                     finishTypeWriter(currentText, dialogueText);
-                    
+
                     if (current.choices && !isOption) {
                         showChoices(current.choices);
                     } else {
                         optionBox.style.display = 'none';
                         isShowOption = false;
                     }
+                    
                 } else {
-                    if(!isShowOption){
+                    if (!isShowOption) {
                         nextDialogue();
                     }
                 }
 
-                if(isOption){
+                if (isOption) {
                     isOption = false;
                 }
             }
         });
+
 
         function handleSpaceKey() {
             const event = new KeyboardEvent('keydown', { code: 'Space', key: ' ', keyCode: 32 });
