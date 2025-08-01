@@ -25,7 +25,7 @@ if ($code === '') {
 }
 
 // Prepare SQL to check passcode
-$stmt = $pdo->prepare("SELECT * FROM PesanTerakhir WHERE passcode = ? LIMIT 1");
+$stmt = $pdo->prepare("SELECT * FROM user WHERE passcode = ? LIMIT 1");
 $stmt->execute([$code]);
 $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
