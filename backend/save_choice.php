@@ -1,4 +1,6 @@
 <?php
+session_start(); 
+
 // Koneksi database
 $host = 'localhost';
 $db   = 'pesanterakhir';
@@ -29,4 +31,3 @@ if ($choice_key && $choice_value) {
     http_response_code(400);
     echo json_encode(['error' => 'Invalid data']);
 }
-?>
