@@ -468,9 +468,96 @@
         </div>
 
     </div>
+    <!-- Passcode Popup -->
+    <!-- Passcode Popup -->
+    <div id="passcode-popup" style="
+        display:none;
+        position:fixed;
+        top:0; left:0;
+        width:100%; height:100%;
+        background-color:rgba(0,0,0,0.6);
+        z-index:1000;
+        justify-content:center;
+        align-items:center;
+        font-family:sans-serif;
+    ">
+        <div style="
+            background:#1F1F1F;
+            padding:20px;
+            border-radius:10px;
+            text-align:center;
+            max-width:300px;
+            width:90%;
+        ">
+            <p style="color:#fff; margin-bottom:15px;">
+                Masukkan kode untuk buktikan kamu Caca:
+            </p>
+            <input type="password" id="passcode-input" placeholder="Enter passcode" style="
+                width:100%;
+                padding:10px;
+                border:1px solid #8B4513;
+                border-radius:5px;
+                background-color:#2a2a2a;
+                color:#fff;
+            ">
+            <br><br>
+            <p id="passcode-error" style="color:#ff4c4c; display:none; margin-bottom:10px;">
+                Kode salah. Coba lagi.
+            </p>
+            <button onclick="checkPasscode()" style="
+                background-color:#8B4513;
+                color:white;
+                border:none;
+                padding:10px 20px;
+                border-radius:5px;
+                cursor:pointer;
+            ">
+                Submit
+            </button>
+        </div>
+    </div>
+
+
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>  
+        let grantedAccess = false;
+
+        function showPasscodePopup() {
+            document.getElementById("passcode-popup").style.display = "flex";
+            document.getElementById("passcode-error").style.display = "none";
+            document.getElementById("passcode-input").value = "";
+        }
+
+        function checkPasscode() {
+            const code = document.getElementById("passcode-input").value;
+            
+            fetch('backend/get_pass.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    grantedAccess = true;
+                    document.getElementById("passcode-popup").style.display = "none";
+                } else {
+                    document.getElementById("passcode-error").style.display = "block";
+                }
+            })
+            .catch(() => {
+                alert("Terjadi kesalahan saat menghubungi server.");
+            });
+        }
+
+        function accessFeature() {
+            // Put the logic of your feature here
+            // alert("Access granted! You are now in the secret feature.");
+            // Example: window.location.href = "feature.html";
+        }
+        showPasscodePopup();
+
         document.querySelector('.option-box').style.display = 'none';
 
         const dialogues = [
@@ -865,6 +952,9 @@
         }
 
         function resetDialogue() {
+            if(!grantedAccess){
+                return;
+            }
             currentDialogue = 0;
             current = dialogues[currentDialogue];
             typeWriter(current.text, dialogueText);
@@ -1094,6 +1184,9 @@
 
         // Keyboard controls
         document.addEventListener('keydown', (e) => {
+            if(!grantedAccess){
+                return;
+            }
             // Check if the focused element is a textarea or an input
             const activeElement = document.activeElement;
             const isTextInput = activeElement.tagName === 'TEXTAREA' ||
