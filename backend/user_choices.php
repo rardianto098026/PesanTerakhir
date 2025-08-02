@@ -68,7 +68,13 @@ $choices = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <td><?= htmlspecialchars($row['session_id']) ?></td>
                         <td><?= htmlspecialchars($row['choice_key']) ?></td>
                         <td><?= htmlspecialchars($row['choice_value']) ?></td>
-                        <td><?= htmlspecialchars($row['timestamp']) ?></td>
+                        <td>
+                            <?php
+                                $dt = new DateTime($row['timestamp'], new DateTimeZone('UTC'));
+                                $dt->setTimezone(new DateTimeZone('Asia/Jakarta'));
+                                echo $dt->format('Y-m-d H:i:s') . ' WIB';
+                            ?>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
